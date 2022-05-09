@@ -1,6 +1,6 @@
 <template>
   <div
-    class="mt-[0.5rem] flex-[0.2] min-h-[100px] min-w-[120px] flex flex-col bg-white card-container rounded-md"
+    class="flex-[0.2] min-h-[100px] flex flex-col bg-white card-container rounded-md"
   >
     <slot></slot>
   </div>

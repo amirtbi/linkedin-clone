@@ -7,8 +7,11 @@ import store from "./store/index.js";
 import "./index.css";
 // import Bootstrap icon
 import "bootstrap-icons/font/bootstrap-icons.css";
-
+// import global component
+import BaseCard from "./components/UI/BaseCard.vue";
 const app = createApp(App);
+// registeration of component
+app.component("base-card", BaseCard);
 app.use(router);
 app.use(store);
 router.isReady().then(() => {
