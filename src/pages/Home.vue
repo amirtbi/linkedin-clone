@@ -1,16 +1,16 @@
 <template>
-  <main class="mt-[80px]">
-    <section class="w-full flex px-[300px] pt-[2rem] main__container">
+  <main class="flex mt-[80px]">
+    <section class="flex w-full lg:px-[300px] pt-[2rem] main__container">
       <!-- side bar left -->
-      <div class="flex-[0.2] min-w-[150px] sidebar">
+      <div class="w-[20%] min-w-[150px] sidebar">
         <the-aside></the-aside>
       </div>
       <!-- center content -->
-      <div class="flex-[0.8] content__container">
+      <div class="mx-[20px] w-[50%] content__container">
         <main-content></main-content>
       </div>
       <!-- right sidebar -->
-      <div class="sidebar-right flex-[0.2]"></div>
+      <div class="sidebar-right w-[20%]"></div>
     </section>
   </main>
 </template>
