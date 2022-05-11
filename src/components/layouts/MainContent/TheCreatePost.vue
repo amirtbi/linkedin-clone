@@ -18,7 +18,7 @@
         <!-- form body -->
         <template #main>
           <form
-            @submit.prevent="submitPost"
+            @submit.prevent="sendPost"
             class="flex-col justify-center form__container px-[1rem]"
           >
             <div class="pt-[0.75rem] px-[1.2rem] flex top__form">
@@ -39,7 +39,7 @@
                 placeholder="What do you want to talk about?"
                 maxlength="100"
                 @input="enableSubmitBtn"
-                v-model="postContent"
+                v-model.trim="postContent"
               ></textarea>
             </div>
             <div
@@ -147,23 +147,24 @@ export default {
       postContent: "",
     };
   },
-  computed: {
-    // buttonIsActive() {
-    //   if (this.postContent !== "") {
-    //     this.$refs.submitButton.removeAttribute("disabled");
-    //     return true;
-    //   } else {
-    //     this.$refs.submitButton.setAttribute("disabled");
-    //     return false;
-    //   }
-    // },
-  },
+  computed: {},
   methods: {
-    submitPost() {
-      console.log("post submitted");
+    async sendPost() {
+      const postData = {
+        name: "amir hosein",
+        description: "Frontend developer",
+        message: this.postContent,
+        photUrl: "",
+      };
+      try {
+        // Send post to database
+        await this.$store.dispatch("addDataToDatabase", postData);
+        this.hideModal();
+      } catch (error) {
+        console.log(error.message);
+      }
     },
     showModal() {
-      console.log("clicked");
       this.isActive = true;
     },
     hideModal() {
@@ -175,7 +176,6 @@ export default {
     enableSubmitBtn() {
       const btnSubmit = this.$refs.submitButton;
       if (this.postContent !== "") {
-        console.log(btnSubmit);
         btnSubmit.removeAttribute("disabled");
         this.activeBtn = true;
       } else {

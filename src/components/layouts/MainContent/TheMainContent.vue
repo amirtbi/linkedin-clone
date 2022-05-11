@@ -4,29 +4,57 @@
       <create-post></create-post>
     </base-card>
     <!-- posts -->
-    <base-card>
-      <post-item
-        name="Alireza Torabi"
-        description="Frontend developer"
-        :photo-url="getPhotoUrl"
-        last-update="2.min"
-      ></post-item>
-    </base-card>
+
+    <post-item
+      v-for="post in allPosts"
+      :id="post.id"
+      :key="post.id"
+      :description="post.description"
+      :message="post.message"
+      :name="post.name"
+      :last-updated="post.timeStamp"
+    ></post-item>
   </div>
 </template>
 
 <script>
 import CreatePost from "./TheCreatePost.vue";
 import PostItem from "../MainContent/Posts.vue";
+
 export default {
   components: {
     CreatePost,
     PostItem,
   },
+  data() {
+    return {
+      messages: [],
+    };
+  },
   computed: {
     getPhotoUrl() {
       return new URL("../../../assets/images/person1.jpg", import.meta.url);
     },
+    allPosts() {
+      return this.$store.getters.posts;
+    },
+  },
+  methods: {
+    setMessage(message) {
+      this.message = message;
+    },
+    loadPosts() {
+      // load posts
+
+      this.$store.dispatch("loadPosts");
+      const fetchPosts = this.$store.getters.posts;
+      this.messages = fetchPosts;
+      console.log("loaded posts", this.messages);
+    },
+  },
+  created() {
+    // Load posts from database
+    this.loadPosts();
   },
 };
 </script>
