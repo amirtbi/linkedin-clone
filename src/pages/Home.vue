@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import TheAside from "../components/layouts/SideBar/TheSidebar.vue";
-import MainContent from "../components/layouts/MainContent/TheMainContent.vue";
+import TheAside from "@component/layouts/SideBar/TheSidebar.vue";
+import MainContent from "@component/layouts/MainContent/TheMainContent.vue";
 import { ref } from "vue";
 export default {
   components: {

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "bootstrap-icons": "^1.8.1",
+    "firebase": "^9.8.1",
     "firebase-tools": "^10.8.0",
     "vue": "^3.2.25",
     "vue-router": "^4.0.15",

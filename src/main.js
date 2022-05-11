@@ -1,5 +1,6 @@
 import { createApp } from "vue";
 import App from "./App.vue";
+
 // import router
 import router from "./router/index.js";
 // import store
@@ -12,6 +13,7 @@ import BaseCard from "./components/UI/BaseCard.vue";
 import BaseModal from "./components/UI/BaseModal.vue";
 
 const app = createApp(App);
+
 // registeration of component
 app.component("base-card", BaseCard);
 app.component("base-modal", BaseModal);

@@ -11,7 +11,7 @@ const store = createStore({
   },
   state() {
     return {
-      post: [],
+      posts: [],
     };
   },
   actions: actions,
