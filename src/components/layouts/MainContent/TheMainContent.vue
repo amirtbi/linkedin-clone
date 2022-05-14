@@ -12,7 +12,6 @@
       :description="post.description"
       :message="post.message"
       :name="post.name"
-      :last-updated="post.timeStamp"
     ></post-item>
   </div>
 </template>
@@ -31,6 +30,7 @@ export default {
       messages: [],
     };
   },
+
   computed: {
     getPhotoUrl() {
       return new URL("../../../assets/images/person1.jpg", import.meta.url);
@@ -58,3 +58,19 @@ export default {
   },
 };
 </script>
+<style scoped>
+.fade-enter-from,
+.fade-leave-to {
+  transform: translateY(-100px);
+  opacity: 0;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s;
+}
+.fade-enter-to,
+.fade-leave-from {
+  transform: translateY(0);
+  opacity: 1;
+}
+</style>

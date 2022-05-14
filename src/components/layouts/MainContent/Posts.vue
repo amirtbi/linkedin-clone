@@ -2,25 +2,26 @@
   <base-card>
     <div class="posts mt-[1rem]">
       <div class="posts__header items-center flex w-full p-[1rem]">
-        <div class="posts__image flex">
-          <img
-            class="w-[60px] rounded-[100%]"
-            src="../../../assets/images/person1.jpg"
-            alt="post"
-          />
-        </div>
-        <div class="ml-[0.75rem] posts__info w-full">
-          <!-- name -->
-          <h3 class="text-[1rem] text-black p-0 font-Roboto font-bold">
-            {{ name }}
-          </h3>
-          <!-- description -->
-          <p class="text-[0.7rem] text-zinc-600">{{ description }}</p>
-          <p class="text-[0.7rem] text-zinc-600">
-            {{ updatedTime }}&nbsp;{{
-              updatedTime == 1 ? "hours ago" : "min ago"
-            }}: edited
-          </p>
+        <shared-actor :name="name" :description="description"></shared-actor>
+        <div class="remove__button relative flex items-center justify-end">
+          <button
+            @click="showPostCard(id)"
+            title="Delete post"
+            class="cursor-pointer hover:bg-gray-300 hover:rounded-[100%] p-[0.5rem]"
+          >
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <!-- popup -->
+          <transition name="fade-in">
+            <div
+              v-if="showModal"
+              class="popup__container flex h-auto min-w-[300px] absolute -left-[80px] top-[50px] bg-white rounded-lg shadow-md"
+            >
+              <ul class="flex-col w-full">
+                <delete-card></delete-card>
+              </ul>
+            </div>
+          </transition>
         </div>
       </div>
       <!-- post body -->
@@ -42,11 +43,17 @@
 </template>
 
 <script>
+import SharedActor from "./PostSharedActor.vue";
 import PostActions from "./PostActions.vue";
-import { ref, watch, onMounted } from "vue";
+import DeleteCard from "./DeleteOptionsCard.vue";
+import { useStore } from "vuex";
+import { ref } from "vue";
+
 export default {
   components: {
     PostActions,
+    SharedActor,
+    DeleteCard,
   },
   props: {
     description: {
@@ -57,9 +64,9 @@ export default {
       type: String,
       required: true,
     },
-    lastUpdated: {
-      type: Object,
-    },
+    // lastUpdated: {
+    //   type: Object,
+    // },
     photoUrl: {
       type: String,
     },
@@ -69,44 +76,22 @@ export default {
     description: {
       type: String,
     },
-    name: {
+    id: {
       type: String,
     },
   },
   setup(props) {
-    const currentTime = ref(new Date().getMinutes());
+    const store = useStore();
 
-    const firebaseTime = ref(null);
-    const updatedTime = ref(null);
-    firebaseTime.value = new Date(
-      props.lastUpdated * 1000 + props.lastUpdated / 1000000
-    )
-      .toLocaleTimeString()
-      .split(":")[1];
-    updatedTime.value = currentTime.value - firebaseTime.value;
-    // methods
-    const updateTime = () => {
-      currentTime.value = new Date().getMinutes();
-      updatedTime.value = Math.abs(currentTime.value - firebaseTime.value);
-      if (updateTime.value <= 0) {
-        updatedTime.value = 1;
-      }
+    // data
+    const showModal = ref(false);
+    const showPostCard = () => {
+      showModal.value = !showModal.value;
     };
-    onMounted(() => {
-      setInterval(() => {
-        updateTime();
-      }, 1000);
-    });
-    // watch
-    watch(updateTime, (newVal, oldVal) => {
-      if (newVal > oldVal) {
-        updatedTime.value = currentTime.value - firebaseTime.value;
-      } else {
-        updatedTime.value = currentTime.value - firebaseTime.value;
-      }
-    });
+
     return {
-      updatedTime,
+      showPostCard,
+      showModal,
     };
   },
 };
@@ -115,5 +100,19 @@ export default {
 <style scoped>
 .post__body {
   overflow-wrap: anywhere;
+}
+.fade-in-enter-from,
+.fade-in-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+}
+.fade-in-enter-active,
+.fade-in-leave-active {
+  transition: all 0.5s;
+}
+.fade-in-enter-to,
+.fade-in-leave-from {
+  opacity: 1;
+  transform: scale(1);
 }
 </style>
