@@ -6,7 +6,9 @@
     <div class="header-left flex justify-start items-center">
       <!-- brand-->
       <div class="cursor-pointer header-brand mr-2">
-        <brand-item />
+        <router-link to="/home">
+          <brand-item />
+        </router-link>
       </div>
       <!-- Search container -->
       <search-box />
@@ -25,6 +27,11 @@ export default {
     SearchBox,
     BrandItem,
     TheNav,
+  },
+  computed: {
+    isLoginPage() {
+      return (this.$router.path = "/login");
+    },
   },
 };
 </script>

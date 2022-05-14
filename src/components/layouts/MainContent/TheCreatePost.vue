@@ -160,6 +160,7 @@ export default {
         // Send post to database
 
         await this.$store.dispatch("addDataToDatabase", postData);
+
         this.hideModal();
       } catch (error) {
         console.log(error.message);

@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 // Import Components
 import Home from "../pages/Home.vue";
-import Login from "../pages/Login.vue";
+import Login from "../pages/Auth.vue";
 import Profile from "../pages/Profile.vue";
 const routes = [
   { path: "/", redirect: "/home" },
