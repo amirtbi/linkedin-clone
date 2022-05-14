@@ -5,4 +5,7 @@ export default {
   setPosts(state, payload) {
     state.posts = payload;
   },
+  setLoggedInfo(state, payload) {
+    state.loggedUser = payload;
+  },
 };
