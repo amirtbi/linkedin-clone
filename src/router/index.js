@@ -1,12 +1,16 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 // Import Components
-import Home from "../pages/Home.vue";
-import Login from "../pages/Auth.vue";
+import Feed from "../pages/Feed.vue";
+import Signup from "../pages/Signup.vue";
+import Login from "../pages/Login.vue";
 import Profile from "../pages/Profile.vue";
+import Home from "../pages/Home.vue";
 const routes = [
-  { path: "/", redirect: "/home" },
-  { path: "/home", name: "home-page", component: Home },
+  { path: "/", redirect: "/feed" },
+  { path: "/feed", name: "feed-page", component: Feed },
+  { path: "/home", naem: "home", component: Home },
+  { path: "/signup", component: Signup },
   { path: "/login", component: Login },
   { path: "/profile", component: Profile },
 ];
