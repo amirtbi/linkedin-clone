@@ -36,7 +36,7 @@ export default {
       return new URL("../../../assets/images/person1.jpg", import.meta.url);
     },
     allPosts() {
-      return this.$store.getters.posts;
+      return this.$store.getters["posts/posts"];
     },
   },
   methods: {
@@ -46,8 +46,8 @@ export default {
     loadPosts() {
       // load posts
 
-      this.$store.dispatch("loadPosts");
-      const fetchPosts = this.$store.getters.posts;
+      this.$store.dispatch("posts/loadPosts");
+      const fetchPosts = this.$store.getters["posts/posts"];
       this.messages = fetchPosts;
       console.log("loaded posts", this.messages);
     },

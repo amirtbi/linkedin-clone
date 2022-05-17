@@ -2,11 +2,7 @@
   <!-- header -->
   <the-header></the-header>
   <main class="flex mt-[80px] pb-[2rem]">
-    <router-view v-slot="slotProps">
-      <transition name="slide" mode="out-in">
-        <component :is="slotProps.Component"></component>
-      </transition>
-    </router-view>
+    <router-view> </router-view>
   </main>
 </template>
 
@@ -15,6 +11,23 @@ import TheHeader from "./components/layouts/TheHeader.vue";
 export default {
   components: {
     TheHeader,
+  },
+  computed: {
+    Classes() {
+      if (this.$route.path === "login") {
+        return "hidebodyOverflow";
+      } else {
+        return "";
+      }
+    },
+  },
+  mounted() {
+    const bodyEl = document.getElementsByTagName("body")[0];
+    if (this.$route.path === "/login") {
+      bodyEl.classList.add("overflow-hide");
+    } else {
+      bodyEl.classList.remove("overflow-hide");
+    }
   },
 };
 </script>
@@ -35,6 +48,9 @@ body {
 .sldie-leave-to {
   opacity: 0;
   transform: translateX(-100px);
+}
+body.overflow-hide {
+  overflow-y: hidden;
 }
 .slide-enter-active,
 .slide-leave-active {

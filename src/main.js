@@ -11,12 +11,14 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 // import global component
 import BaseCard from "./components/UI/BaseCard.vue";
 import BaseModal from "./components/UI/BaseModal.vue";
+import BaseBrand from "./components/UI/Brand.vue";
 
 const app = createApp(App);
 
 // registeration of component
 app.component("base-card", BaseCard);
 app.component("base-modal", BaseModal);
+app.component("base-brand", BaseBrand);
 app.use(router);
 app.use(store);
 router.isReady().then(() => {

@@ -7,8 +7,12 @@ export default {
   actions: {
     login(context, payload) {},
     async SignUp(context, payload) {
+      const userEntry = {
+        email: payload.get("email"),
+        password: payload.get("password"),
+      };
       const response = await new authService(
-        payload
+        userEntry
       ).SignupWithEmailAndPassword();
       let loggedUser = {};
       if (response) {
@@ -23,7 +27,7 @@ export default {
       } else {
         throw new Error("Sign up has faced some issues");
       }
-      context.commit("setLoggedInfo", loggedUser);
+      context.commit("posts/setLoggedInfo", loggedUser);
     },
     logout(context, payload) {},
   },
