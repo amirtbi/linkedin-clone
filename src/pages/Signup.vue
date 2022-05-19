@@ -76,69 +76,8 @@
   </div>
 </template>
 <script>
-const formValidation = (user) => {
-  let validationOutputs = [];
-  let formIsValid = true;
-  if (!user.get("email").includes("@") && user.get("email") !== "") {
-    validationOutputs.push({
-      key: "email",
-      isVal: false,
-      erroMessage: "Please enter a valid format email",
-    });
-    formIsValid = false;
-  } else if (user.get("email") === "") {
-    validationOutputs.push({
-      key: "email",
-      isVal: false,
-      errorMessage: "Please fill the email field",
-    });
-    formIsValid = false;
-  } else {
-    validationOutputs.push({ key: "email", erroMessage: null, isVal: true });
-  }
-  if (user.get("password").length <= 6 && user.get("password") !== "") {
-    validationOutputs.push({
-      key: "password",
-      isVal: false,
-      errorMessage: "Your password length must have at least 6 characters",
-    });
-    formIsValid = false;
-  } else if (user.get("password") === "") {
-    validationOutputs.push({
-      key: "password",
-      isVal: false,
-      errorMessage: "Please fill the password field",
-    });
-    formIsValid = false;
-  } else {
-    validationOutputs.push({
-      key: "password",
-      isVal: true,
-      errorMessage: null,
-    });
-  }
-  if (user.get("fullname") === "") {
-    validationOutputs.push({
-      key: "fullname",
-      isVal: false,
-      errorMessage: "Please fill your fullname field",
-    });
-    formIsValid = false;
-  } else {
-    validationOutputs.push({
-      key: "fullname",
-      isVal: true,
-      errorMessage: null,
-    });
-  }
-  return { formIsValid, validationOutputs };
-};
-const updateInputsValue = (inputs) => {
-  inputs.forEach((item, index) => {
-    this[`${item.key}`].valid.isVal = item.isVal;
-    this[`${item.key}`].valid.errorMessage = item.errorMessage;
-  });
-};
+import { Validation } from "../services/_formValidation.js";
+
 export default {
   data() {
     return {
@@ -183,32 +122,42 @@ export default {
       }
     },
 
-    submitMode() {
+    async submitMode() {
       if (this.mode === "1") {
         this.modeCaption = "Continue";
         // mode =2 ==> Entering fullname
         this.mode = "2";
         this.userInfo.set("email", this.email.val);
+
         this.userInfo.set("password", this.password.val);
       } else {
         this.userInfo.set("fullname", this.fullname.val);
-        this.registerForm(this.userInfo);
+        await this.registerForm(this.userInfo);
       }
     },
     async registerForm(dataEntry) {
       this.formIsValid = true;
-      const validationResult = formValidation(dataEntry);
-      this.formIsValid = validationResult.formIsValid;
-      const outputsArray = validationResult.validationOutputs;
-      updateInputsValue(outputsArray);
-      // Rgister user
+      console.log("user info", dataEntry);
+      const validation = new Validation(dataEntry, this.formIsValid);
+      validation.validate();
+      const valResult = validation.result;
+      this.formIsValid = valResult[1];
+      const outputsArray = valResult[0];
+      this.updateInputsValue(outputsArray);
+
       if (this.formIsValid) {
         await this.$store.dispatch("SignUp", dataEntry);
-        this.$router.push("/home");
+        this.$router.push("/feed");
       } else {
         this.$refs.registerFrom.reset();
         console.log("form is not valid");
       }
+    },
+    updateInputsValue(inputs) {
+      inputs.forEach((item) => {
+        this[`${item.key}`].valid.isVal = item.isVal;
+        this[`${item.key}`].valid.errorMessage = item.errorMessage;
+      });
     },
   },
 };
