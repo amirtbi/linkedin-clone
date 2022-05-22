@@ -29,6 +29,9 @@ export default {
       bodyEl.classList.remove("overflow-hide");
     }
   },
+  created() {
+    this.$store.dispatch("autoLogin");
+  },
 };
 </script>
 
