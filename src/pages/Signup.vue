@@ -5,6 +5,34 @@
       class="bg-white shadow-md p-[2rem] rounded-lg w-full"
       @submit.prevent="submitMode"
     >
+      <div class="mb-4 flex text-center justify-center items-center">
+        <div
+          class="flex justify-center items-center relative rounded-[50%] w-[120px] h-[120px] bg-gray-200"
+        >
+          <span class="text-gray-400 text-center" v-if="!preview">Profile</span>
+          <img
+            v-else
+            class="w-full rounded-[100%]"
+            :src="preview"
+            alt="profile"
+          />
+        </div>
+      </div>
+      <div class="relative justify-center form-field w-full mb-2">
+        <input
+          ref="file"
+          @change="uploadHandler"
+          class="cursor-pointer inputFile"
+          name="file"
+          type="file"
+          id="file"
+        />
+        <label
+          class="flex justify-center transition-all items-center text-white font-bold text-[0.75rem] hover:bg-gray-600 bg-gray-400 cursor-pointer p-2 font-Roboto"
+          for="file"
+          >{{ fileName === "" ? "Upload photo" : fileName }}</label
+        >
+      </div>
       <div class="form-field w-full" v-if="mode === '2'">
         <input
           @change="updateValidation"
@@ -25,10 +53,12 @@
         <input
           @input="updateValidation"
           :class="{ 'mb-2': email.valid.isVal }"
-          class="w-full p-1 mt-[0.5rem] rounded-md border-[1px] border-gray-400"
+          class="w-full p-2 mt-[0.5rem] rounded-md border-[1px] border-gray-400"
           type="email"
+          placeholder="Email"
           id="email"
           v-model.trim="email.val"
+          required
         />
         <small class="text-orange-600" v-if="!email.valid.isVal">{{
           email.valid.errorMessage
@@ -43,6 +73,7 @@
           :type="inputType"
           v-model.trim="password.val"
           placeholder="Password"
+          required
         />
         <span
           @click="toggleType"
@@ -71,6 +102,7 @@
         >
           {{ modeCaption }}
         </button>
+        <button @click="download">download image</button>
       </div>
     </form>
   </div>
@@ -92,6 +124,10 @@ export default {
           errorMessage: null,
         },
       },
+      photoUrl: {
+        name: "photoUrl",
+        val: "",
+      },
       password: {
         name: "password",
         val: "",
@@ -111,9 +147,25 @@ export default {
 
       formIsValid: true,
       userInfo: new Map(),
+      fileName: "",
+      preview: null,
     };
   },
   methods: {
+    validationHandler(dataEntry) {
+      const validation = new Validation(dataEntry);
+      validation.validate();
+      const valResult = validation.result;
+      this.formIsValid = valResult[1];
+      const outputsArray = valResult[0];
+      console.log("validation array", valResult);
+      this.updateInputsValue(outputsArray);
+    },
+    uploadHandler() {
+      this.fileName = this.$refs.file.files[0].name.split(".jpeg")[0];
+      this.photoUrl.val = this.$refs.file.files[0];
+      this.preview = URL.createObjectURL(this.photoUrl.val);
+    },
     toggleType() {
       if (this.inputType === "password") {
         this.inputType = "text";
@@ -126,31 +178,40 @@ export default {
       if (this.mode === "1") {
         this.modeCaption = "Continue";
         // mode =2 ==> Entering fullname
-        this.mode = "2";
         this.userInfo.set("email", this.email.val);
-
         this.userInfo.set("password", this.password.val);
+        this.userInfo.set("photoUrl", this.photoUrl.val);
+        this.validationHandler(this.userInfo);
+        if (this.formIsValid) {
+          this.mode = "2";
+        }
       } else {
         this.userInfo.set("fullname", this.fullname.val);
         await this.registerForm(this.userInfo);
       }
     },
     async registerForm(dataEntry) {
-      this.formIsValid = true;
-      console.log("user info", dataEntry);
-      const validation = new Validation(dataEntry, this.formIsValid);
-      validation.validate();
-      const valResult = validation.result;
-      this.formIsValid = valResult[1];
-      const outputsArray = valResult[0];
-      this.updateInputsValue(outputsArray);
+      this.validationHandler(dataEntry);
 
       if (this.formIsValid) {
         await this.$store.dispatch("SignUp", dataEntry);
+
         this.$router.push("/feed");
       } else {
         this.$refs.registerFrom.reset();
         console.log("form is not valid");
+      }
+    },
+    async download() {
+      console.log("==========");
+
+      try {
+        const response = await this.$store.dispatch("downloadImage", {
+          email: "soheil@gmail.com",
+          file: this.photoUrl.val,
+        });
+      } catch (error) {
+        console.log(error.message);
       }
     },
     updateInputsValue(inputs) {
@@ -162,3 +223,19 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.inputFile {
+  overflow: hidden;
+  z-index: -1;
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  display: none;
+}
+
+.inputFile + label {
+  font-size: 1.2rem;
+}
+</style>

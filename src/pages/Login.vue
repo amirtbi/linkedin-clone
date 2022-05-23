@@ -1,10 +1,13 @@
 <template>
-  <div class="auth__container mx-auto my-[6rem] w-[500px]">
+  <div class="auth__container mx-auto my-[1rem] w-[500px]">
     <form
       ref="registerFrom"
       class="bg-white shadow-md p-[2rem] rounded-lg w-full"
-      @submit.prevent="submitMode"
+      @submit.prevent="login"
     >
+      <div class="title-container w-full py-2">
+        <h1 class="text-[1.5rem] font-bold font-Roboto">Sign in</h1>
+      </div>
       <div class="form-field w-full mb-4">
         <label class="text-gray-500">Email</label>
         <input
@@ -12,6 +15,7 @@
           class="w-full p-1 mt-[0.5rem] rounded-md border-[1px] border-gray-400"
           type="email"
           id="email"
+          v-model="email.val"
         />
         <small class="text-orange-600" v-if="!email.valid.isVal">{{
           email.valid.errorMessage
@@ -24,6 +28,7 @@
           class="w-full p-2 mt-[0.5rem] rounded-md border-[2px] border-gray-400"
           :type="inputType"
           placeholder="Password"
+          v-model="password.val"
         />
         <span
           @click="toggleType"
@@ -48,13 +53,34 @@
 
 <script>
 // import
-
+import { Validation } from "../services/_formValidation.js";
 export default {
   components: {
     // LoginForm,
   },
+
   data() {
-    return {};
+    return {
+      inputType: "password",
+      email: {
+        name: "email",
+        val: "",
+        valid: {
+          isVal: true,
+          errorMessage: null,
+        },
+      },
+      password: {
+        name: "password",
+        val: "",
+        valid: {
+          isVal: true,
+          errorMessage: null,
+        },
+      },
+      userMap: new Map(),
+      formIsValid: true,
+    };
   },
   computed: {
     pathCheck() {
@@ -65,21 +91,43 @@ export default {
       }
     },
   },
+
   methods: {
-    //     updateValidation() {
-    //       console.log("validation update");
-    //       const userInfo = {
-    //         email: this.email.val,
-    //         password: this.password.val,
-    //         fullname: this.fullname.val,
-    //         picUrl: this.picUrl.val,
-    //       };
-    //       const validationResult = formValidation(userInfo);
-    //       validationResult.forEach((item) => {
-    //         this[`${item.key}`].valid.isVal = item.isVal;
-    //         this[`${item.key}`].valid.errorMessage = item.errorMessage;
-    //       });
-    //     },
+    toggleType() {
+      if (this.inputType === "password") {
+        this.inputType = "text";
+      } else {
+        this.inputType = "password";
+      }
+    },
+
+    async login() {
+      try {
+        // storing inputs value
+        this.userMap.set("email", this.email.val);
+        this.userMap.set("password", this.password.val);
+        // form validation
+        const validation = new Validation(this.userMap);
+        validation.validate();
+        const valResult = validation.result;
+        console.log(valResult);
+        this.formIsValid = valResult[1];
+        this.updateValidation(valResult[0]);
+
+        if (this.formIsValid) {
+          await this.$store.dispatch("Signin", this.userMap);
+          this.$router.replace("/feed");
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    },
+    updateValidation(inputs) {
+      inputs.forEach((item) => {
+        this[`${item.key}`].valid.isVal = item.isVal;
+        this[`${item.key}`].valid.errorMessage = item.errorMessage;
+      });
+    },
   },
 };
 </script>
