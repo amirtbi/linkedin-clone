@@ -2,6 +2,7 @@
 import firebase from "firebase/compat/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 const firebaseConfig = {
   apiKey: "AIzaSyC6Q5u0mhlRhhzQDLNh0vMwzqlyyQkw2Sg",
   authDomain: "linkedin-clone-3aced.firebaseapp.com",
@@ -17,5 +18,7 @@ const fbApp = firebase.initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
 //Auth
 const auth = getAuth();
+// storage
+const storage = getStorage();
 
-export { db, auth };
+export { db, auth, storage };
