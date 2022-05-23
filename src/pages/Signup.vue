@@ -26,6 +26,7 @@
           name="file"
           type="file"
           id="file"
+          accept=".jpeg"
         />
         <label
           class="flex justify-center transition-all items-center text-white font-bold text-[0.75rem] hover:bg-gray-600 bg-gray-400 cursor-pointer p-2 font-Roboto"
@@ -195,6 +196,11 @@ export default {
 
       if (this.formIsValid) {
         await this.$store.dispatch("SignUp", dataEntry);
+        const userId = this.$store.getters.userId;
+        this.$store.dispatch("uploadImage", {
+          file: this.photoUrl.val,
+          userId,
+        });
 
         this.$router.push("/feed");
       } else {
@@ -202,24 +208,16 @@ export default {
         console.log("form is not valid");
       }
     },
-    async download() {
-      console.log("==========");
 
-      try {
-        const response = await this.$store.dispatch("downloadImage", {
-          email: "soheil@gmail.com",
-          file: this.photoUrl.val,
-        });
-      } catch (error) {
-        console.log(error.message);
-      }
-    },
     updateInputsValue(inputs) {
       inputs.forEach((item) => {
         this[`${item.key}`].valid.isVal = item.isVal;
         this[`${item.key}`].valid.errorMessage = item.errorMessage;
       });
     },
+  },
+  created() {
+    this.preview = localStorage.getItem("photoUrl");
   },
 };
 </script>

@@ -37,6 +37,7 @@ export default {
       token: null,
       email: null,
       photoUrl: null,
+      userId: null,
     };
   },
   mutations: {
@@ -44,7 +45,11 @@ export default {
       console.log("mutated ");
       state.token = payload.token;
       state.email = payload.email;
-      state.photoUrl = payload.photoUrl;
+
+      state.userId = payload.userId;
+    },
+    setPhotoUrl(state, payload) {
+      state.photoUrl = payload;
     },
   },
   actions: {
@@ -114,13 +119,11 @@ export default {
           userId: user.uid,
           email: user.email,
           fullname: payload.get("fullname"),
-          photoUrl: payload.get("photoUrl"),
         };
         // storing data inside local storage
         const StoreHanlder = new localStorageCl(
           loggedUser.token,
-          loggedUser.email,
-          loggedUser.photoUrl
+          loggedUser.email
         );
         StoreHanlder.addTo();
         await context.dispatch("storeLoggedInfo", {
@@ -131,13 +134,8 @@ export default {
         context.commit("setLoggedInfo", {
           token: loggedUser.token,
           email: loggedUser.email,
+          userId: loggedUser.userId,
         });
-        if (payload.get("photoUrl") !== "") {
-          context.dispatch("uploadImage", {
-            file: payload.get("photoUrl"),
-            userId: user.uid,
-          });
-        }
       } else {
         throw new Error("Sign up has faced some issues");
       }
@@ -162,7 +160,16 @@ export default {
       return !!state.token;
     },
     profileImage(state) {
-      return state.photoUrl;
+      if (localStorage.getItem("photoUrl") !== "") {
+        console.log("from localstorage");
+        return localStorage.getItem("photoUrl");
+      } else if (state.photoUrl !== "") {
+        console.log("from vuex");
+        return state.photoUrl;
+      }
+    },
+    userId(state) {
+      return state.userId;
     },
   },
 };

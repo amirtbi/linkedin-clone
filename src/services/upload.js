@@ -1,3 +1,4 @@
+import store from "../store/Modules/User/index.js";
 import { storage } from "./firebase.js";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 export class storageService {
@@ -21,10 +22,13 @@ export class storageService {
       },
       (error) => {
         console.log("error has occured", error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+          localStorage.setItem("photoUrl", url);
+          store.commit("setPhotoUrl", url);
+        });
       }
-      // () => {
-      //   getDownloadURL(uploadTask.snapshot.ref).then((url) => console.log(url));
-      // }
     );
   }
   async downloadImage() {

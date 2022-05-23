@@ -14,7 +14,7 @@
     <div class="top-[30px] absolute w-[75px] avatar rounded-full">
       <img
         class="rounded-full border-[1px] border-white"
-        src="../../../assets/images/person1.jpg"
+        :src="personImage"
         alt=""
       />
     </div>
@@ -47,6 +47,11 @@ import StaticView from "./TheStaticView.vue";
 export default {
   components: {
     StaticView,
+  },
+  computed: {
+    personImage() {
+      return this.$store.getters.profileImage;
+    },
   },
 };
 </script>

@@ -23,11 +23,7 @@
           >
             <div class="pt-[0.75rem] px-[1.2rem] flex top__form">
               <div class="w-full flex items-center profile">
-                <img
-                  class="rounded-[100%] w-[50px]"
-                  src="../../../assets/images/person1.jpg"
-                  alt=""
-                />
+                <img class="rounded-[100%] w-[50px]" :src="userImage" alt="" />
                 <p class="text-[1.2rem] ml-2 font-bold font-Roboto">
                   Amir hosein
                 </p>
@@ -83,8 +79,8 @@
       <div class="mr-[0.5rem] flex-[0.1] profile__container">
         <img
           class="object-cover max-w-[60px] rounded-[100%]"
-          src="../../../assets/images/person1.jpg"
-          alt=""
+          :src="userImage"
+          alt="profile"
         />
       </div>
       <div class="flex-[0.9]">
@@ -147,7 +143,11 @@ export default {
       postContent: "",
     };
   },
-  computed: {},
+  computed: {
+    userImage() {
+      return this.$store.getters.profileImage;
+    },
+  },
   methods: {
     async sendPost() {
       const postData = {

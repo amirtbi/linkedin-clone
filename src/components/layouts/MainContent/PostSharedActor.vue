@@ -1,11 +1,7 @@
 <template>
   <div class="shared-actor__container flex w-full">
     <div class="posts__image flex max-w-[60px]">
-      <img
-        class="object-cover rounded-[100%]"
-        src="../../../assets/images/person1.jpg"
-        alt="post"
-      />
+      <img class="object-cover rounded-[100%]" :src="actorImage" alt="post" />
     </div>
     <div class="ml-[0.75rem] posts__info w-[100%]">
       <!-- name -->
@@ -22,5 +18,10 @@
 <script>
 export default {
   props: ["description", "name"],
+  computed: {
+    actorImage() {
+      return this.$store.getters.profileImage;
+    },
+  },
 };
 </script>

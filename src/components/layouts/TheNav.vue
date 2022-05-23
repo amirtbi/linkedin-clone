@@ -20,16 +20,18 @@
 <script>
 import HeaderOptions from "../layouts/TheHeaderOptions.vue";
 import UserAvatar from "../UI/Avatar.vue";
-import userProfile from "../../assets/images/person1.jpg";
+
 import { reactive } from "vue";
 // import vue instance
 import { computed } from "vue";
+import { useStore } from "vuex";
 export default {
   components: {
     HeaderOptions,
     UserAvatar,
   },
   setup() {
+    const store = useStore();
     const links = reactive([
       { id: "Home", Icon: "bi bi-house-door" },
       { id: "My Network", Icon: " bi bi-people" },
@@ -40,7 +42,7 @@ export default {
 
     // Computed
     const profile = computed(() => {
-      return userProfile;
+      return store.getters.profileImage;
     });
 
     return {
