@@ -17,7 +17,11 @@ const routes = [
   },
   { path: "/home", naem: "home", component: Home },
   { path: "/signup", component: Signup },
-  { path: "/login", component: Login },
+  {
+    path: "/login",
+    component: Login,
+    meta: { requiresUnAuth: true },
+  },
   { path: "/profile", component: Profile },
 ];
 

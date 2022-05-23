@@ -21,6 +21,4 @@ app.component("base-modal", BaseModal);
 app.component("base-brand", BaseBrand);
 app.use(router);
 app.use(store);
-router.isReady().then(() => {
-  app.mount("#app");
-});
+app.mount("#app");

@@ -9,7 +9,8 @@ export class Validation {
     this.formIsValid = true;
     if (
       !this.userMap.get("email").includes("@") &&
-      this.userMap.get("email") !== ""
+      this.userMap.get("email") !== "" &&
+      !!this.userMap.get("email")
     ) {
       this.outputs.push({
         key: "email",
@@ -17,7 +18,10 @@ export class Validation {
         erroMessage: "Please enter a valid format email",
       });
       this.formIsValid = false;
-    } else if (this.userMap.get("email") === "") {
+    } else if (
+      this.userMap.get("email") === "" &&
+      !!this.userMap.get("email")
+    ) {
       this.outputs.push({
         key: "email",
         isVal: false,
@@ -29,7 +33,8 @@ export class Validation {
     }
     if (
       this.userMap.get("password").length <= 6 &&
-      this.userMap.get("password") !== ""
+      this.userMap.get("password") !== "" &&
+      !!this.userMap.get("password")
     ) {
       this.outputs.push({
         key: "password",
@@ -37,7 +42,10 @@ export class Validation {
         errorMessage: "Your password length must have at least 6 characters",
       });
       this.formIsValid = false;
-    } else if (this.userMap.get("password") === "") {
+    } else if (
+      this.userMap.get("password") === "" &&
+      !!this.userMap.get("password")
+    ) {
       this.outputs.push({
         key: "password",
         isVal: false,
@@ -51,14 +59,14 @@ export class Validation {
         errorMessage: null,
       });
     }
-    if (this.userMap.get("fullname") === "") {
+    if (this.userMap.get("fullname") === "" && !!this.userMap.get("fullname")) {
       this.outputs.push({
         key: "fullname",
         isVal: false,
         errorMessage: "Please fill your fullname field",
       });
       this.formIsValid = false;
-    } else {
+    } else if (!!this.userMap.get("fullname")) {
       this.outputs.push({
         key: "fullname",
         isVal: true,
