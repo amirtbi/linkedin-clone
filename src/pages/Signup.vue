@@ -103,7 +103,14 @@
         >
           {{ modeCaption }}
         </button>
-        <button @click="download">download image</button>
+      </div>
+      <div class="w-full pt-2 flex items-center justify-center">
+        <span class="text-gray-500 mr-2">Already on Linkedin?</span
+        ><router-link
+          class="text-sky-700 font-bold font-Roboto hover:underline"
+          to="/login"
+          >Sign in</router-link
+        >
       </div>
     </form>
   </div>
