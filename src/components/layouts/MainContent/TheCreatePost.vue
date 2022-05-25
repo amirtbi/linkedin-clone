@@ -25,7 +25,7 @@
               <div class="w-full flex items-center profile">
                 <img class="rounded-[100%] w-[50px]" :src="userImage" alt="" />
                 <p class="text-[1.2rem] ml-2 font-bold font-Roboto">
-                  Amir hosein
+                  {{ username }}
                 </p>
               </div>
             </div>
@@ -147,11 +147,14 @@ export default {
     userImage() {
       return this.$store.getters.profileImage;
     },
+    username() {
+      return this.$store.getters.fullname;
+    },
   },
   methods: {
     async sendPost() {
       const postData = {
-        name: "amir hosein",
+        name: this.username,
         description: "Frontend developer",
         message: this.postContent,
         photUrl: "",

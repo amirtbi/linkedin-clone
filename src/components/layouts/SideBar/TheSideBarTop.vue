@@ -26,7 +26,7 @@
         to="/home"
         class="text-black hover:underline text-[1rem] text-center font-['Roboto'] font-bold"
       >
-        Amir hosein Torabi
+        {{ username }}
       </router-link>
     </div>
     <!-- Profession title -->
@@ -51,6 +51,9 @@ export default {
   computed: {
     personImage() {
       return this.$store.getters.profileImage;
+    },
+    username() {
+      return this.$store.getters.fullname;
     },
   },
 };
