@@ -7,9 +7,9 @@ import { localStorageCl } from "../../../services/localStorage/localstorage.js";
 
 let timer;
 export default {
-  async retreiveDatafromServer() {
+  async retrieveDataFromServer() {
     let data = new Map();
-    let foundUser;
+
     const querySnapshot = await getDocs(collection(db, "users"));
 
     querySnapshot.forEach((doc) => {
@@ -22,9 +22,16 @@ export default {
     const token = localStorage.getItem("token");
     const email = localStorage.getItem("email");
     const photoUrl = localStorage.getItem("PhotoUrl");
+    const fullname = localStorage.getItem("fullname");
     const tokenExpiration = localStorage.getItem("tokenExpiration");
+    const loggedInfo = {
+      token,
+      email,
+      photoUrl,
+      fullname,
+    };
     // Timer
-    const expiresIn = +tokenExpiration - new Date().getTime();
+    const expiresIn = tokenExpiration - new Date().getTime();
     if (expiresIn < 0) {
       console.log("expiresin");
       return;
@@ -33,7 +40,7 @@ export default {
       context.dispatch("autoLogout");
     }, expiresIn);
     if (token) {
-      context.commit("setLoggedInfo", { token: token, email: email });
+      context.commit("setLoggedInfo", loggedInfo);
       context.commit("setPhotoUrl", photoUrl);
     }
   },
@@ -43,6 +50,7 @@ export default {
       token: null,
       email: null,
       userId: null,
+      fullname: null,
     });
     context.commit("setPhotoUrl", null);
   },
@@ -76,7 +84,7 @@ export default {
       const user = response.user;
 
       const resDownload = await context.dispatch("downloadImage", user.uid);
-      const fetchData = await context.dispatch("retreiveDatafromServer");
+      const fetchData = await context.dispatch("retrieveDataFromServer");
 
       let foundUser;
       for (let [key, value] of fetchData) {
@@ -97,11 +105,12 @@ export default {
       const StoreHanlder = new localStorageCl(loggedData);
       StoreHanlder.addTo();
       // timer
-
-      //   const expiresIn = 360000;
-      //   timer = setTimeout(() => {
-      //     context.dispatch("autoLogout");
-      //   }, expiresIn);
+      const expiresIn = 3600000;
+      const tokenExpiration = new Date().getTime() + 3600000;
+      localStorage.setItem("tokenExpiration", tokenExpiration);
+      timer = setTimeout(() => {
+        context.dispatch("autoLogout");
+      }, expiresIn);
       context.commit("setLoggedInfo", loggedData);
     } else {
       throw new Error("Login process has been faced some problems");
@@ -131,10 +140,11 @@ export default {
       StoreHanlder.addTo();
       // timer
 
-      //   const expiresIn = 3600000;
-      //   timer = setTimeout(() => {
-      //     context.dispatch("autoLogout");
-      //   }, expiresIn);
+      const tokenExpiration = new Date().getTime() + 3600000;
+      localStorage.setItem("tokenExpiration", tokenExpiration);
+      timer = setTimeout(() => {
+        context.dispatch("autoLogout");
+      }, expiresIn);
       await context.dispatch("storeLoggedInfo", {
         fullname: payload.get("fullname"),
         email: user.email,
@@ -150,19 +160,15 @@ export default {
     }
     context.commit("posts/setLoggedInfo", loggedUser);
   },
-  async logout(context, payload) {
+  async logout(context) {
     await new AuthService({ email: "", password: "" }).logout();
-    const StoreHanlder = new localStorageCl();
-    StoreHanlder.delete();
-    // clearInterval(timer);
+    localStorage.clear();
+    clearInterval(timer);
     context.commit("setAutoLogout");
   },
   uploadImage(_, payload) {
     const uploadCl = new storageService(payload);
     uploadCl.uploadImage();
-    // if (payload.hasOwnProperty("file")) {
-    //   //   uploadCl.profileImage = payload.file;
-    // }
   },
   async downloadImage(_, userId) {
     const response = await new downloadCl(userId).downLoad();
