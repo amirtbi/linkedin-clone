@@ -9,6 +9,7 @@ export default {
       email: null,
       photoUrl: null,
       userId: null,
+      fullname: null,
       didAutoLogout: false,
     };
   },
@@ -17,6 +18,7 @@ export default {
       state.token = payload.token;
       state.email = payload.email;
       state.userId = payload.userId;
+      state.fullname = payload.fullname;
     },
     setPhotoUrl(state, payload) {
       state.photoUrl = payload;

@@ -33,7 +33,7 @@
         <span
           @click="toggleType"
           class="cursor-pointer hover:underline text-gray-600 absolute right-[10px] top-[50px]"
-          >Show</span
+          >{{ displayMode }}</span
         >
         <small class="text-orange-600" v-if="!password.valid.isVal">{{
           password.valid.errorMessage
@@ -98,6 +98,13 @@ export default {
         return false;
       }
     },
+    displayMode() {
+      if (this.inputType === "text") {
+        return "Hide";
+      } else {
+        return "Show";
+      }
+    },
   },
 
   methods: {
@@ -124,6 +131,7 @@ export default {
 
         if (this.formIsValid) {
           await this.$store.dispatch("Signin", this.userMap);
+
           this.$router.replace("/feed");
         }
       } catch (error) {

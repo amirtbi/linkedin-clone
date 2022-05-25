@@ -8,6 +8,7 @@
 
 <script>
 import TheHeader from "./components/layouts/TheHeader.vue";
+//import { localStorageCl } from "./services/localStorage/localstorage.js";
 export default {
   components: {
     TheHeader,
@@ -20,6 +21,9 @@ export default {
         return "";
       }
     },
+    // didLogout() {
+    //   return this.$store.getters.didLogout;
+    // },
   },
   mounted() {
     const bodyEl = document.getElementsByTagName("body")[0];
@@ -30,7 +34,16 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("autoLogin");
+    // this.$store.dispatch("autoLogin");
+  },
+
+  watch: {
+    // didLogout(curVal, oldVal) {
+    //   if (curVal && curVal !== oldVal) {
+    //     console.log("autlogout...");
+    //     this.$router.replace("/home");
+    //   }
+    // },
   },
 };
 </script>

@@ -1,4 +1,4 @@
-import store from "../store/Modules/User/index.js";
+import store from "../store/index.js";
 import { storage } from "./firebase.js";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 export class storageService {
@@ -10,6 +10,9 @@ export class storageService {
         `/images/${this.fileName}/${this.file.name}`
       ));
   }
+  // set profileImage(data) {
+  //   this.file = data.file;
+  // }
   uploadImage() {
     const uploadTask = uploadBytesResumable(this._storageRef, this.file);
     uploadTask.on(
@@ -31,10 +34,15 @@ export class storageService {
       }
     );
   }
-  async downloadImage() {
-    const storeRef = this._storageRef;
-    const response = await getDownloadURL(storeRef);
-    console.log(response);
+}
+
+export class downloadCl {
+  constructor(userId) {
+    this.userId = userId;
+    this.path = ref(storage, `/images/${this.userId}/image`);
+  }
+  async downLoad() {
+    const response = await getDownloadURL(this.path);
     return response;
   }
 }

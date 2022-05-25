@@ -1,21 +1,32 @@
-import authService from "../../../services/auth.js";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDocs, collection } from "firebase/firestore";
 import { db } from "../../../services/firebase.js";
 import AuthService from "../../../services/auth.js";
-import { storageService } from "../../../services/upload.js";
+import { storageService, downloadCl } from "../../../services/upload.js";
 //
 import { localStorageCl } from "../../../services/localStorage/localstorage.js";
 
 let timer;
 export default {
+  async retreiveDatafromServer() {
+    let data = new Map();
+    let foundUser;
+    const querySnapshot = await getDocs(collection(db, "users"));
+
+    querySnapshot.forEach((doc) => {
+      data.set(doc.id, doc.data());
+    });
+
+    return data;
+  },
   autoLogin(context) {
     const token = localStorage.getItem("token");
     const email = localStorage.getItem("email");
     const photoUrl = localStorage.getItem("PhotoUrl");
     const tokenExpiration = localStorage.getItem("tokenExpiration");
     // Timer
-    const expiresIn = tokenExpiration - new Date().getTime();
+    const expiresIn = +tokenExpiration - new Date().getTime();
     if (expiresIn < 0) {
+      console.log("expiresin");
       return;
     }
     timer = setTimeout(() => {
@@ -57,27 +68,40 @@ export default {
       email: payload.get("email"),
       password: payload.get("password"),
     };
-    const response = await new authService(
+
+    const response = await new AuthService(
       userEntry
     ).LoginWithEmailAndPassword();
     if (response) {
       const user = response.user;
+
+      const resDownload = await context.dispatch("downloadImage", user.uid);
+      const fetchData = await context.dispatch("retreiveDatafromServer");
+
+      let foundUser;
+      for (let [key, value] of fetchData) {
+        if (key === user.uid) {
+          foundUser = value;
+        }
+      }
+
       const loggedData = {
         token: user.accessToken,
         email: user.email,
+        userId: user.uid,
+        photoUrl: resDownload,
+        fullname: foundUser.fullname,
       };
+
       // storing data inside local storage
-      const StoreHanlder = new localStorageCl(
-        loggedData.token,
-        loggedData.email
-      );
+      const StoreHanlder = new localStorageCl(loggedData);
       StoreHanlder.addTo();
       // timer
-      const tokenExpiration = localStorage.getItem("tokenExpiration");
-      const expiresIn = tokenExpiration;
-      timer = setTimeout(() => {
-        context.dispatch("autoLogout");
-      }, expiresIn);
+
+      //   const expiresIn = 360000;
+      //   timer = setTimeout(() => {
+      //     context.dispatch("autoLogout");
+      //   }, expiresIn);
       context.commit("setLoggedInfo", loggedData);
     } else {
       throw new Error("Login process has been faced some problems");
@@ -88,7 +112,8 @@ export default {
       email: payload.get("email"),
       password: payload.get("password"),
     };
-    const response = await new authService(
+
+    const response = await new AuthService(
       userEntry
     ).SignupWithEmailAndPassword();
     let loggedUser = {};
@@ -102,17 +127,14 @@ export default {
         fullname: payload.get("fullname"),
       };
       // storing data inside local storage
-      const StoreHanlder = new localStorageCl(
-        loggedUser.token,
-        loggedUser.email
-      );
+      const StoreHanlder = new localStorageCl(loggedUser);
       StoreHanlder.addTo();
       // timer
-      const tokenExpiration = localStorage.getItem("tokenExpiration");
-      const expiresIn = tokenExpiration;
-      timer = setTimeout(() => {
-        context.dispatch("autoLogout");
-      }, expiresIn);
+
+      //   const expiresIn = 3600000;
+      //   timer = setTimeout(() => {
+      //     context.dispatch("autoLogout");
+      //   }, expiresIn);
       await context.dispatch("storeLoggedInfo", {
         fullname: payload.get("fullname"),
         email: user.email,
@@ -129,17 +151,21 @@ export default {
     context.commit("posts/setLoggedInfo", loggedUser);
   },
   async logout(context, payload) {
-    await new AuthService().logout();
+    await new AuthService({ email: "", password: "" }).logout();
     const StoreHanlder = new localStorageCl();
     StoreHanlder.delete();
-    clearInterval(timer);
+    // clearInterval(timer);
     context.commit("setAutoLogout");
   },
   uploadImage(_, payload) {
-    new storageService(payload).uploadImage();
+    const uploadCl = new storageService(payload);
+    uploadCl.uploadImage();
+    // if (payload.hasOwnProperty("file")) {
+    //   //   uploadCl.profileImage = payload.file;
+    // }
   },
-  async downloadImage(_, payload) {
-    const response = await new storageService(payload).downloadImage();
+  async downloadImage(_, userId) {
+    const response = await new downloadCl(userId).downLoad();
     return response;
   },
 };

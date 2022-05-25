@@ -79,7 +79,7 @@
         <span
           @click="toggleType"
           class="cursor-pointer hover:underline text-gray-600 absolute right-[10px] top-[50px]"
-          >Show</span
+          >{{ displayType }}</span
         >
         <small class="text-orange-600" v-if="!password.valid.isVal">{{
           password.valid.errorMessage
@@ -170,8 +170,14 @@ export default {
       this.updateInputsValue(outputsArray);
     },
     uploadHandler() {
+      // Change name of uploaded image
+      Object.defineProperty(this.$refs.file.files[0], "name", {
+        writable: true,
+        value: "image",
+      });
       this.fileName = this.$refs.file.files[0].name.split(".jpeg")[0];
       this.photoUrl.val = this.$refs.file.files[0];
+      console.log(this.photoUrl.val);
       this.preview = URL.createObjectURL(this.photoUrl.val);
     },
     toggleType() {
@@ -221,6 +227,15 @@ export default {
         this[`${item.key}`].valid.isVal = item.isVal;
         this[`${item.key}`].valid.errorMessage = item.errorMessage;
       });
+    },
+  },
+  computed: {
+    displayType() {
+      if (this.inputType === "password") {
+        return "Show";
+      } else {
+        return "hide";
+      }
     },
   },
   created() {

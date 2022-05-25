@@ -16,4 +16,7 @@ export default {
   userId(state) {
     return state.userId;
   },
+  fullname(state) {
+    return state.fullname;
+  },
 };
