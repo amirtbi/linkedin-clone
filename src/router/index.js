@@ -16,7 +16,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   { path: "/home", naem: "home", component: Home },
-  { path: "/signup", component: Signup },
+  { path: "/signup", component: Signup, meta: { requiresUnAuth: true } },
   {
     path: "/login",
     component: Login,
@@ -32,7 +32,7 @@ const router = new createRouter({
 
 router.beforeEach((to, _, next) => {
   let userIsLogged = store.getters.isAuthenticated;
-  console.log(userIsLogged);
+
   if (to.meta.requiresAuth && !userIsLogged) {
     next("/login");
   } else if (to.meta.requiresUnAuth && userIsLogged) {
